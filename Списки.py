@@ -1,10 +1,12 @@
 from typing import Iterable, Optional, Any
-from _collections_abc import MutableSequence
-from venvo.node import Node
-from venvo.node import DoubleLinkedNode
+from _collections_abc import MutableSequence  # from collection.abc import MutableSequence
+from node import Node
+from node import DoubleLinkedNode
 
 
 class LinkedList(MutableSequence):
+    CLASS_NODE = Node
+
     def __init__(self, data: Iterable = None):
         """Конструктор связного списка"""
         self.len = 0  # длинна списка
@@ -15,14 +17,14 @@ class LinkedList(MutableSequence):
             for value in data:
                 self.append(value)
 
-    def insert(self, index: int, value: Any) -> None:
+    def insert(self, index: int, value: Any) -> None:  # fixme реализовать insert
         """Вставка значения по указанному индексу"""
         node_value = self.step_by_step_on_nodes(index)
         return node_value
 
     def append(self, value: Any):
         """ Добавление элемента в конец списка. """
-        append_node = Node(value)
+        append_node = Node(value)  # todo Node(value) -> self.CLASS_NODE(value) и можно унаследовать такой метод
 
         if self.head is None:
             self.head = self.tail = append_node
@@ -77,7 +79,7 @@ class LinkedList(MutableSequence):
         return f"{self.to_list()}"
 
     def __delitem__(self, key):
-        if not 0 <= key < self.len:
+        if not 0 <= key < self.len:  # fixme DRY вынести в отдельный метод is_valid_index
             raise IndexError("Некорректный индекс")
 
         if not isinstance(key, int):
@@ -101,13 +103,16 @@ class LinkedList(MutableSequence):
 
     def __len__(self):
         """Возвращает количество узлов в списке"""
-        return len(self.step_by_step_on_nodes(index=0))
+        return len(self.step_by_step_on_nodes(index=0))  # fixme исправить длину списка
 
     def clear(self):
         self.head = None
         self.tail = None
 
         self.len = 0
+
+    def count(self, value) -> int:
+        ...
 
 
 class DoubleLinkedList(LinkedList):

@@ -1,4 +1,6 @@
 from typing import Any, Optional
+
+
 class Node:
     """ Класс узлов для связанного списка. """
     def __init__(self, value, next_: Optional["Node"] = None):
@@ -6,7 +8,7 @@ class Node:
         self.next = None
         self.set_next(next_)
 
-    def is_valid(self, node: Any):
+    def is_valid(self, node: Any):  # todo staticmethod либо переписать
         if not isinstance(node, (type(None), Node)):
             raise TypeError("Объект должен быть класса Node")
 
@@ -38,6 +40,8 @@ class DoubleLinkedNode(Node):
     def prev(self, prev_: Optional["Node"]):
         self.is_valid(prev_)
         self._prev = prev_
+
+    # todo is_valid либо перегрузить либо переписать в родительском классе
 
 
 if __name__ == "__main__":
