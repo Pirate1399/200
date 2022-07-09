@@ -1,10 +1,12 @@
 from typing import Iterable, Optional, Any
-from _collections_abc import MutableSequence
-from venvo.node import Node
-from venvo.node import DoubleLinkedNode
+from _collections_abc import MutableSequence  # from collection.abc import MutableSequence
+from node import Node
+from node import DoubleLinkedNode
 
 
 class LinkedList(MutableSequence):
+    CLASS_NODE = Node
+
     def __init__(self, data: Iterable = None):
         """Конструктор связного списка"""
         self.len = 0  # длинна списка
@@ -15,10 +17,20 @@ class LinkedList(MutableSequence):
             for value in data:
                 self.append(value)
 
-    def insert(self, index: int, value: Any) -> None:
+    def insert(self, index: int, value: Any):
         """Вставка значения по указанному индексу"""
-        node_value = self.step_by_step_on_nodes(index)
-        return node_value
+        insert_node = Node(value)
+        if index == 0:
+            insert_node.next = self.head
+            self.head = insert_node
+        elif index >= self.len - 1:
+            self.step_by_step_on_nodes(self.len - 1).next = insert_node
+        else:
+            prev = self.step_by_step_on_nodes(index - 1)
+            sec = self.step_by_step_on_nodes(index)
+            prev.next = insert_node
+            insert_node.next = sec
+        self.len += 1
 
     def append(self, value: Any):
         """ Добавление элемента в конец списка. """
@@ -32,13 +44,17 @@ class LinkedList(MutableSequence):
 
         self.len += 1
 
+    def valid_index(self, key):
+        if not 0 <= key < self.len:
+            raise IndexError("Некорректный индекс")
+
+        if not isinstance(key, int):
+            raise TypeError("Индекс должен быть целым положительным числом")
+
+
     def step_by_step_on_nodes(self, index: int) -> Node:
         """ Функция выполняет перемещение шаг за шагом по списку. Return - узел. """
-        if not isinstance(index, int):
-            raise TypeError()
-
-        if not 0 <= index < self.len:  # для for
-            raise IndexError()
+        self.valid_index(index)
 
         current_node = self.head
         for _ in range(index):
@@ -77,11 +93,7 @@ class LinkedList(MutableSequence):
         return f"{self.to_list()}"
 
     def __delitem__(self, key):
-        if not 0 <= key < self.len:
-            raise IndexError("Некорректный индекс")
-
-        if not isinstance(key, int):
-            raise TypeError("Индекс должен быть целым положительным числом")
+        self.valid_index(key)
 
         print(f"Узел со значением {self.step_by_step_on_nodes(key)} удален.")
 
@@ -101,13 +113,21 @@ class LinkedList(MutableSequence):
 
     def __len__(self):
         """Возвращает количество узлов в списке"""
-        return len(self.step_by_step_on_nodes(index=0))
+        return self.len
 
     def clear(self):
         self.head = None
         self.tail = None
 
         self.len = 0
+
+    def count(self, value) -> int:
+        count_value = 0
+        for i in range(self.len):
+            current_value = self.step_by_step_on_nodes(i)
+            if current_value.value == value:
+                count_value +=1
+        return count_value
 
 
 class DoubleLinkedList(LinkedList):
